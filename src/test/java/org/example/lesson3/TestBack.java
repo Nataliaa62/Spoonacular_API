@@ -1,8 +1,10 @@
 package org.example.lesson3;
 
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Test;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -180,5 +182,69 @@ public class TestBack extends AbstractTest{
                 .extract()
                 .jsonPath()
                 .toString();
+    }
+
+    @Test
+    void addShoppingListTest() {
+    //создаем  пользователя
+        JsonPath userConnect = given()
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .queryParam("apiKey", getApiKey())
+                .body("{\n"
+
+                        + " \"username\": \"nataliaa64no@yandex.ru\",\n"
+                        + " \"firstName\": \"nataliaa64\",\n"
+                        + " \"lastName\": \"no\",\n"
+                        + " \"email\": \"nataliaa64no@yandex.ru\"\n"
+
+                        + "}")
+                .when()
+                .post("https://api.spoonacular.com/users/connect")
+                .then()
+                .statusCode(200)
+                .extract()
+                .jsonPath();
+        assertThat(userConnect, notNullValue());
+
+        final   String  hash = userConnect.getString(" \"hash\"");
+        final   String  username = userConnect.getString(" \"username\"");
+
+        System.out.println("Создан полльзователь: " + username);
+        System.out.println("Hash: " + hash);
+
+        //добавляем в лист продукт (используем сгенерируемый хэш)
+        JsonPath shoppingList = given()
+                .queryParam("hash", hash)
+                .queryParam("apiKey", getApiKey())
+                .body("{\n"
+                     + " \"item\": \"1 package baking powder\",\n"
+                     + " \"aisle\": \"Baking\"\n"
+                     + "}"
+                )
+                .when()
+                .post("https://api.spoonacular.com/mealplanner/" + username + "/shopping-list/items")
+                .then()
+                .statusCode(200)
+                .extract()
+                .jsonPath();
+        assertThat(shoppingList, notNullValue());
+        assertThat(shoppingList.get("name"), equalTo("baking powder"));
+
+        final   String  item = shoppingList.getString(" \"name\"");
+        final   int  amount = (int) shoppingList.getDouble(" \"measures\".\"original\".\"amount\"");
+        final   String  unit = shoppingList.getString(" \"measures\".\"original\".\"unit\"");
+        final   String  id = shoppingList.getString(" \"id\"");
+
+        System.out.println("Shopping-list содержит: " + item + " в количестве " + amount + " " + unit);
+
+
+        given()
+                .queryParam("hash", hash)
+                .queryParam("apiKey", getApiKey())
+                .delete("https://api.spoonacular.com/mealplanner/" + username + "/shopping-list/items/" + id)
+                .then()
+                .statusCode(200);
+
     }
 }
