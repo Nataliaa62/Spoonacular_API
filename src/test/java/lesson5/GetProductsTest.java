@@ -1,32 +1,37 @@
 package lesson5;
 
-import lesson5.dto.Product;
+import lesson6.db.dao.ProductsMapper;
+import lesson6.db.model.Products;
+import lesson6.db.model.ProductsExample;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import retrofit2.Response;
-
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 public class GetProductsTest extends AbstractTest {
 
-
-    // Получить список продуктов
+//получить список продутов не выше 500 руб.
     @Test
     void getProductsTest() throws IOException {
-        Response<Product[]> response = productService.getProducts().execute();
 
-        //При запросе списка товаров  статус-код - 200
-        assertThat(response.code(), equalTo(200));
+        ProductsMapper productsMapper = session.getMapper(ProductsMapper.class);
+        ProductsExample example = new ProductsExample();
+        //критерий значение стоимость продукта не более 500 руб.
+        example.createCriteria().andPriceLessThan(500);
 
-        // Поля ответа (id, title, price, categoryTitle) заполнены соотвествующими значениями
-        assertThat(response.body()[3].getTitle(), containsString("Samsung Watch X1000"));
+        List<Products> productsList = productsMapper.selectByExample(example);
 
-        Arrays.asList(response.body()).stream().forEach(s -> System.out.println(s));
-    };
+
+        for (Products products : productsList)
+        {
+            //проверка - цена не более 500
+            Assert.assertTrue(products.getPrice()<500);
+            //вывести список
+            System.out.println(products);
+        }
+        //посчитать количество
+        System.out.println(productsMapper.countByExample(example));
+    }
 
 }

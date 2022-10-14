@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Project_Back" />
+        <module name="Project_Back — копия" />
       </profile>
     </annotationProcessing>
   </component>
