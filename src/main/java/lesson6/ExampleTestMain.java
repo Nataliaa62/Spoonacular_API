@@ -22,14 +22,12 @@ public class ExampleTestMain {
 
         categoriesExample.createCriteria().andIdEqualTo(1);
 
-//        List<Categories> list = categoriesMapper.selectByExample(categoriesExample);
-//        System.out.println(categoriesMapper.countByExample(categoriesExample));
+
 
         lesson6.db.model.Categories selected = categoriesMapper.selectByPrimaryKey(2);
         System.out.println("ID: " + selected.getId() + "\ntitle: " + selected.getTitle());
 
         lesson6.db.model.Categories categories = new lesson6.db.model.Categories();
-        //categories.setId(Long.valueOf(3));
         categories.setTitle("Test");
         categoriesMapper.insert(categories);
         sqlSession.commit();

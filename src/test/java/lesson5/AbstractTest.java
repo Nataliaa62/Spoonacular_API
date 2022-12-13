@@ -39,16 +39,13 @@ public class AbstractTest {
     }
 
     @BeforeEach
-        //надо добавить иницаиализацию подключения к своему майбатис, доавтить в свои абтср классы, бефор алл.
+
     void session() throws IOException {
-        //путь до айла, так как в ресурсе находится, то и не указывать абсл. путь
+
         String resource = "mybatis-config.xml";
-        //создается инпут стрим и читаем данные из файла
         InputStream inputStream = Resources.getResourceAsStream(resource);
-        //испл. интрефейс склсешнфэктори, преедаем соотвю интупт стрим на вход
         SqlSessionFactory sqlSessionFactory = new
                 SqlSessionFactoryBuilder().build(inputStream);
-        //получаем объект склсейшнфетори и открываем сессию, т.е. создаем скл сессию для доступа к базе данных , проихволит подключение
         session = sqlSessionFactory.openSession();
 
     }

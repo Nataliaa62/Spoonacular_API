@@ -6,7 +6,6 @@ import java.util.List;
 import lesson6.db.model.Categories;
 import lesson6.db.model.CategoriesExample;
 import org.apache.ibatis.annotations.Param;
-//Мэпперы - реализация скл (интерфейс для доступа к субд),н-р, посчитать кол-во значений в объекте категорий, удалить, вставить записать
 
 public interface CategoriesMapper {
     /**
